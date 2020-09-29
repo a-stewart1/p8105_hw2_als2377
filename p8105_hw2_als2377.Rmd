@@ -149,5 +149,15 @@ read.csv("./fivethirtyeight_datasets/snp.csv") %>%
   select(-day)
 ```
 
+Read and tidy unemployement data. 
+
+```{r}
+unemploy_df = 
+  read.csv("./fivethirtyeight_datasets/unemployment.csv") %>% 
+  pivot_longer(cols = Jan:Dec, names_to = "month", values_to = "% unemployment") %>% 
+  rename("year" = "Year")
+
+```
+
 
 
