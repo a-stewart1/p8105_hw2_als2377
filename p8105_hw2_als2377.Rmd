@@ -135,8 +135,9 @@ pols_df =
   read.csv("./fivethirtyeight_datasets/pols-month.csv") %>% 
   separate(mon, c("year", "month", "day"), sep="-") %>% 
   mutate(month = month.abb[as.factor(month)]) %>% 
-  mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>% 
-  select(-day, -prez_dem, -prez_gop)
+  mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>%   select(-day, -prez_dem, -prez_gop)
+
+pols_df$year = as.integer(pols_df$year)
 ```
 
 Read and clean snp.csv dataset. 
@@ -144,9 +145,12 @@ Read and clean snp.csv dataset.
 ```{r snp_data}
 snp_df = 
 read.csv("./fivethirtyeight_datasets/snp.csv") %>% 
-  separate(date, c("year", "month", "day"), sep="/") %>% 
+  separate(date, c("day", "month", "year"), sep="/") %>% 
   mutate(month = month.abb[as.factor(month)]) %>% 
-  select(-day)
+  select(-day) %>% 
+  relocate(year)
+
+snp_df$year = as.integer(snp_df$year)
 ```
 
 Read and tidy unemployement data. 
@@ -156,8 +160,18 @@ unemploy_df =
   read.csv("./fivethirtyeight_datasets/unemployment.csv") %>% 
   pivot_longer(cols = Jan:Dec, names_to = "month", values_to = "% unemployment") %>% 
   rename("year" = "Year")
+```
 
+Join the datasets by mergining snp into pols, and merging unemployment into the result. 
+
+```{r}
+combined_df = 
+  left_join(pols_df, snp_df, by = c("year", "month"))
+
+final_df = 
+  left_join(combined_df, unemploy_df, by = c("year", "month"))
 ```
 
 
+```
 
