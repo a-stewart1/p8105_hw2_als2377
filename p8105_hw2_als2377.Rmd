@@ -77,7 +77,7 @@ Read and clean the NYC Transit dataset.
 
 ```{r read_transit_data}
 transit_df = 
-  read.csv("./NYC_Transit_Subway_Entrance_And_Exit_Data (1).csv") %>%  
+  read.csv("./NYC_Transit_Subway_Entrance_And_Exit_Data (1).csv") %>%
   janitor::clean_names() %>% 
   select(line:entry, vending, ada) 
   mutate(transit_df, entry = recode(entry, YES = "TRUE", NO = "FALSE"))
@@ -127,4 +127,18 @@ filter(transit_tidy, route_number == "A" & ada == TRUE) %>%
 There are `r filter(transit_tidy, route_number == "A") %>% distinct(route_number, station_name) %>% count()` distinct stations that serve the A train. Of these stations, `r filter(transit_tidy, route_number == "A" & ada == TRUE) %>% distinct(route_number, station_name) %>% count()` are ADA compliant. 
 
 ## Problem 3 
+
+Read and clean FiveThirtyEight pols-month dataset. 
+
+```{r read_pols_month}
+pols_df = 
+  read.csv("./fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(mon, c("year", "month", "day"), sep="-") %>% 
+  mutate(month = month.abb[as.factor(month)]) %>% 
+  mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>% 
+  select(-day, -prez_dem, -prez_gop)
+  
+```
+
+
 
