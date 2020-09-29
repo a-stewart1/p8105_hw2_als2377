@@ -9,6 +9,7 @@ This is my solution for Homework 2.
 library(tidyverse)
 library(readxl)
 library(dplyr)
+library(janitor)
 ```
 
 
@@ -16,7 +17,7 @@ library(dplyr)
 
 Read the Mr. Trash Wheel dataset. 
 
-```{r}
+```{r trashwheel_data}
 trashwheel_df = 
   read_xlsx("./Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   sheet = "Mr. Trash Wheel", 
@@ -31,7 +32,7 @@ trashwheel_df =
 
 Read precipitation data for 2017 and 2018. 
 
-```{r}
+```{r precipitation_data}
 precip_2018 = 
   read_excel("./Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   sheet = "2018 Precipitation", 
@@ -55,7 +56,7 @@ precip_2017 =
 
 Combine annual precipitation. 
 
-```{r}
+```{r annual_precipitation}
 month_df = 
   tibble(
     month = 1:12, 
@@ -68,5 +69,18 @@ precip_df =
 left_join(precip_df, month_df, by = "month")
 ```
 
-This dataset contains information from the Mr. Trash Wheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trash wheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, including some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` rows by `r ncol(trashwheel_df)` columns in our final dataset. Additional data sheets include monthly precipitation data. The total precipitation in 2019 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches. THe median number of sports balls found in the a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`. 
+This dataset contains information from the Mr. Trash Wheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trash wheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, including some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` rows by `r ncol(trashwheel_df)` columns in our final dataset. Additional data sheets include monthly precipitation data. The total precipitation in 2019 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches. The median number of sports balls found in the a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`. 
+
+## Problem 2
+
+Read and clean the NYC Transit dataset. 
+
+```{r read_transit_data}
+transit_df = 
+  read.csv("./NYC_Transit_Subway_Entrance_And_Exit_Data (1).csv") %>%  
+  janitor::clean_names() %>% 
+  select(line:entry, vending, ada) 
+  mutate(transit_df, entry = recode(entry, YES = "TRUE", NO = "FALSE"))
+```
+
 
