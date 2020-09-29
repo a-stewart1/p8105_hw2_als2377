@@ -137,7 +137,16 @@ pols_df =
   mutate(month = month.abb[as.factor(month)]) %>% 
   mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>% 
   select(-day, -prez_dem, -prez_gop)
-  
+```
+
+Read and clean snp.csv dataset. 
+
+```{r snp_data}
+snp_df = 
+read.csv("./fivethirtyeight_datasets/snp.csv") %>% 
+  separate(date, c("year", "month", "day"), sep="/") %>% 
+  mutate(month = month.abb[as.factor(month)]) %>% 
+  select(-day)
 ```
 
 
