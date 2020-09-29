@@ -84,3 +84,23 @@ transit_df =
 ```
 
 
+
+```{r describing_transit_data}
+select(distinct(transit_df, line, station_name)) %>% 
+  count()
+
+filter(transit_df, ada == "TRUE") %>%
+    distinct(line, station_name) %>%
+    count()
+
+filter(transit_df, vending == "NO" & entry == "TRUE") %>% 
+     count() / 
+filter(transit_df, vending == "NO") %>% 
+      count() 
+```
+
+This dataset contains information about the NYC transit system. It contains the variables: `r variable.names(transit_df)`. The data cleaning so far has consisted of cleaning the variable names, selecting appropriate columns in the dataset, and converting the entry variable from a character to logical variable. The resulting dataset is `r nrow(transit_df)` rows by `r ncol(transit_df)` columns. 
+
+There are `r select(distinct(transit_df, line, station_name)) %>% count()` distinct stations. `r filter(transit_df, ada == "TRUE") %>% distinct(line, station_name) %>% count()` of the stations are ADA compliant and `r filter(transit_df, vending == "NO" & entry == "TRUE") %>% count()` out of `r filter(transit_df, vending == "NO") %>% count()` station entrance/exits without vending allow entrance. 
+
+
