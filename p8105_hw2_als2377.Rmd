@@ -93,14 +93,38 @@ filter(transit_df, ada == "TRUE") %>%
     distinct(line, station_name) %>%
     count()
 
-filter(transit_df, vending == "NO" & entry == "TRUE") %>% 
-     count() / 
+filter(transit_df, vending == "NO" & entry == "YES") %>% 
+  count() / 
 filter(transit_df, vending == "NO") %>% 
       count() 
 ```
 
 This dataset contains information about the NYC transit system. It contains the variables: `r variable.names(transit_df)`. The data cleaning so far has consisted of cleaning the variable names, selecting appropriate columns in the dataset, and converting the entry variable from a character to logical variable. The resulting dataset is `r nrow(transit_df)` rows by `r ncol(transit_df)` columns. 
 
-There are `r select(distinct(transit_df, line, station_name)) %>% count()` distinct stations. `r filter(transit_df, ada == "TRUE") %>% distinct(line, station_name) %>% count()` of the stations are ADA compliant and `r filter(transit_df, vending == "NO" & entry == "TRUE") %>% count()` out of `r filter(transit_df, vending == "NO") %>% count()` station entrance/exits without vending allow entrance. 
+There are `r select(distinct(transit_df, line, station_name)) %>% count()` distinct stations. `r filter(transit_df, ada == "TRUE") %>% distinct(line, station_name) %>% count()` of the stations are ADA compliant and `r filter(transit_df, vending == "NO" & entry == "YES") %>% count()` out of `r filter(transit_df, vending == "NO") %>% count()` station entrance/exits without vending allow entrance. 
 
+```{r transit_tidy}
+transit_tidy =
+transit_df %>%
+mutate_at(vars(route1:route11), as.character) %>%
+pivot_longer(
+route1:route11,
+names_to = "route_name",
+names_prefix = "route",
+values_to = "route_number") %>%
+drop_na(route_number)
+
+filter(transit_tidy, route_number == "A") %>% 
+  distinct(route_number, station_name) %>% 
+  count()
+
+filter(transit_tidy, route_number == "A" & ada == TRUE) %>% 
+    distinct(route_number, station_name) %>%
+    count()
+
+```
+
+There are `r filter(transit_tidy, route_number == "A") %>% distinct(route_number, station_name) %>% count()` distinct stations that serve the A train. Of these stations, `r filter(transit_tidy, route_number == "A" & ada == TRUE) %>% distinct(route_number, station_name) %>% count()` are ADA compliant. 
+
+## Problem 3 
 
