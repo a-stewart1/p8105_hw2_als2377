@@ -173,5 +173,5 @@ final_df =
 ```
 
 
-```
+The final dataset is a combination of three separate datasets that contained information on (1) the number of national politicians who are democratic or republican at any given time, (2) closing values of the Standard & Poor's stock index (S&P), and (3) percentage of unemployment by month of the associated year. The final set is `r nrow(final_df)` rows by `r ncol(final_df)` columns with a range of years from `r summarize(final_df, min(year))` to `r summarize(final_df, max(year))` and key variable names of `r variable.names(final_df)`. 
 
