@@ -80,28 +80,13 @@ transit_df =
   read.csv("./NYC_Transit_Subway_Entrance_And_Exit_Data (1).csv") %>%
   janitor::clean_names() %>% 
   select(line:entry, vending, ada) 
-  mutate(transit_df, entry = recode(entry, YES = "TRUE", NO = "FALSE"))
+  mutate(transit_df, entry = recode(entry, "YES" = "TRUE", "NO" = "FALSE"))
 ```
 
 
+This dataset contains information about the NYC transit system. It contains the variables: `r variable.names(transit_df)`. The data cleaning so far has consisted of cleaning the variable names, selecting appropriate columns in the dataset, and converting the entry variable from a character to logical variable. The resulting dataset is `r nrow(transit_df)` rows by `r ncol(transit_df)` columnns. The data are not tidy, given that the route variable could be organized in a way that is more readable, combining the different routes into condensed columns.  
 
-```{r describing_transit_data}
-select(distinct(transit_df, line, station_name)) %>% 
-  count()
-
-filter(transit_df, ada == "TRUE") %>%
-    distinct(line, station_name) %>%
-    count()
-
-filter(transit_df, vending == "NO" & entry == "YES") %>% 
-  count() / 
-filter(transit_df, vending == "NO") %>% 
-      count() 
-```
-
-This dataset contains information about the NYC transit system. It contains the variables: `r variable.names(transit_df)`. The data cleaning so far has consisted of cleaning the variable names, selecting appropriate columns in the dataset, and converting the entry variable from a character to logical variable. The resulting dataset is `r nrow(transit_df)` rows by `r ncol(transit_df)` columns. 
-
-There are `r select(distinct(transit_df, line, station_name)) %>% count()` distinct stations. `r filter(transit_df, ada == "TRUE") %>% distinct(line, station_name) %>% count()` of the stations are ADA compliant and `r filter(transit_df, vending == "NO" & entry == "YES") %>% count()` out of `r filter(transit_df, vending == "NO") %>% count()` station entrance/exits without vending allow entrance. 
+There are `r select(distinct(transit_df, line, station_name)) %>% count()` distinct stations. `r filter(transit_df, ada == "TRUE") %>% distinct(line, station_name) %>% count()` of the stations are ADA compliant and `r filter(transit_df, vending == "NO" & entry == "YES") %>% count()` out of `r filter(transit_df, vending == "NO") %>% count()` station entrance/exits without vending, or `r filter(transit_df, vending == "NO" & entry == "YES") %>% count() / filter(transit_df, vending == "NO") %>% count()`, do allow entrance. 
 
 ```{r transit_tidy}
 transit_tidy =
@@ -113,15 +98,6 @@ names_to = "route_name",
 names_prefix = "route",
 values_to = "route_number") %>%
 drop_na(route_number)
-
-filter(transit_tidy, route_number == "A") %>% 
-  distinct(route_number, station_name) %>% 
-  count()
-
-filter(transit_tidy, route_number == "A" & ada == TRUE) %>% 
-    distinct(route_number, station_name) %>%
-    count()
-
 ```
 
 There are `r filter(transit_tidy, route_number == "A") %>% distinct(route_number, station_name) %>% count()` distinct stations that serve the A train. Of these stations, `r filter(transit_tidy, route_number == "A" & ada == TRUE) %>% distinct(route_number, station_name) %>% count()` are ADA compliant. 
@@ -135,7 +111,8 @@ pols_df =
   read.csv("./fivethirtyeight_datasets/pols-month.csv") %>% 
   separate(mon, c("year", "month", "day"), sep="-") %>% 
   mutate(month = month.abb[as.factor(month)]) %>% 
-  mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>%   select(-day, -prez_dem, -prez_gop)
+  mutate(president = case_when(prez_gop == 1 ~ "gop", prez_dem == 1 ~ "dem")) %>%
+  select(-day, -prez_dem, -prez_gop)
 
 pols_df$year = as.integer(pols_df$year)
 ```
